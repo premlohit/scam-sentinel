@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scam Sentinel — Fake Job Posting Detector</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="scanline"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◈</span>
+    <span class="brand-name">Scam Sentinel</span>
+  </div>
+  <div class="tag">job posting fraud scanner</div>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>Is this job offer real, or a trap?</h1>
+    <p>Paste a job description or upload the PDF. We run it through a trained classifier
+       plus a set of known scam-pattern checks, and give you one number to trust:
+       the <strong>risk score</strong>.</p>
+  </section>
+
+  <section class="panel input-panel">
+    <div class="tabs">
+      <button class="tab active" data-tab="paste">Paste Text</button>
+      <button class="tab" data-tab="upload">Upload PDF</button>
+    </div>
+
+    <div class="tab-content active" data-content="paste">
+      <textarea id="jobText" placeholder="Paste the full job description here — title, company, salary, responsibilities, contact info..."></textarea>
+    </div>
+    <div class="tab-content" data-content="upload">
+      <label class="dropzone" id="dropzone">
+        <input type="file" id="pdfFile" accept="application/pdf" hidden>
+        <span class="dz-icon">⇪</span>
+        <span class="dz-text">Click to choose a PDF, or drag it here</span>
+        <span class="dz-filename" id="dzFilename"></span>
+      </label>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="company">Company name</label>
+        <input type="text" id="company" placeholder="e.g. Northbridge Analytics">
+      </div>
+      <div class="field">
+        <label for="email">Recruiter email</label>
+        <input type="text" id="email" placeholder="e.g. hr@company.com">
+      </div>
+      <div class="field">
+        <label for="website">Company website</label>
+        <input type="text" id="website" placeholder="e.g. https://company.com">
+      </div>
+    </div>
+
+    <button id="scanBtn" class="scan-btn">
+      <span class="scan-btn-label">Scan Posting</span>
+    </button>
+    <div id="errorMsg" class="error-msg"></div>
+  </section>
+
+  <section class="panel result-panel" id="resultPanel" hidden>
+    <div class="result-top">
+      <div class="gauge-wrap">
+        <svg viewBox="0 0 200 120" class="gauge">
+          <path d="M20,110 A90,90 0 0,1 180,110" class="gauge-track"/>
+          <path d="M20,110 A90,90 0 0,1 180,110" class="gauge-fill" id="gaugeFill"/>
+        </svg>
+        <div class="gauge-value">
+          <span id="riskNumber">0</span>
+          <span class="gauge-unit">/100</span>
+        </div>
+        <div class="gauge-label">RISK SCORE</div>
+      </div>
+
+      <div class="verdict-block">
+        <div class="verdict" id="verdictLabel">—</div>
+        <div class="confidence">ML model confidence: <span id="mlConfidence">—</span></div>
+        <p class="explanation" id="explanationText"></p>
+      </div>
+    </div>
+
+    <div class="flags-grid">
+      <div class="flag-col">
+        <h3>Language red flags</h3>
+        <ul id="redFlagsList" class="flag-list"></ul>
+      </div>
+      <div class="flag-col">
+        <h3>Salary analysis</h3>
+        <ul id="salaryFlagsList" class="flag-list"></ul>
+      </div>
+      <div class="flag-col">
+        <h3>Company verification</h3>
+        <ul id="verificationFlagsList" class="flag-list"></ul>
+      </div>
+    </div>
+
+    <div class="words-block" id="wordsBlock" hidden>
+      <h3>Words that drove the "fake" prediction</h3>
+      <div class="chip-row" id="topWords"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Heuristic checks are rule-based (no live LinkedIn/registry API in this build) — always verify independently before sharing personal or financial info.
+</footer>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
